@@ -1,0 +1,191 @@
+﻿<common:LayoutAwarePage
+    x:Name="pageRoot"
+    x:Class="SearchCharms.ItemDetailPage"
+    DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Self}}"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SearchCharms"
+    xmlns:data="using:SearchCharms.Data"
+    xmlns:common="using:SearchCharms.Common"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+   
+    mc:Ignorable="d">
+    
+    <Page.Resources>
+
+        <!-- Collection of items displayed by this page -->
+        <CollectionViewSource
+            x:Name="itemsViewSource"
+            Source="{Binding Items}"
+             IsSourceGrouped="true"
+            ItemsPath="Items"
+           />
+
+    </Page.Resources>
+
+    <!--
+        This grid acts as a root panel for the page that defines two rows:
+        * Row 0 contains the back button and page title
+        * Row 1 contains the rest of the page layout
+    -->
+    <Grid
+        Style="{StaticResource LayoutRootStyle}"
+        DataContext="{Binding Group}"
+        d:DataContext="{Binding AllGroups[0], Source={d:DesignInstance Type=data:SampleDataSource, IsDesignTimeCreatable=True}}">
+        <Grid.Background>
+            <ImageBrush ImageSource="/Assets/Images/Bg.jpg"/>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="140"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--
+            The remainder of the page is one large FlipView that displays details for
+            one item at a time, allowing the user to flip through all items in the chosen
+            group
+        -->
+        <ScrollViewer
+            x:Name="gridScrollViewer"
+            Grid.Row="1"
+             HorizontalScrollBarVisibility="Auto"
+            Style="{StaticResource HorizontalScrollViewerStyle}">
+            <StackPanel x:Name="container" Margin="120,0,0,0" Orientation="Horizontal">
+                <StackPanel VerticalAlignment="Top" Background="White" Height="500" Width="390">
+                    <Image Height="422" Margin="0,10,0,0" Stretch="UniformToFill" Width="370" Source="Assets/Images/SubPageBigImage.jpg"/>
+                    <TextBlock Margin="10,0,10,10" Style="{StaticResource SubheaderTextStyle}" MaxHeight="60" Foreground="#FF357999" HorizontalAlignment="Left" Width="300" Text="Lorem Ipsum" FontWeight="SemiBold" FontSize="26.667"/>
+                </StackPanel>
+                <Grid Width="390" Height="500" VerticalAlignment="Top" Margin="10,0,0,0" Background="#FF161616">
+                    <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="13.333" Margin="10,20,0,0" FontFamily="Segoe UI" LineHeight="24" Height="470">
+                			<Run Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent est ipsum, luctus in porta non, porttitor vitae dolor. Donec imperdiet neque faucibus ante gravida in commodo dolor tristique. Suspendisse potenti. Maecenas at sapien nunc, ullamcorper sollicitudin neque. Pellentesque mattis molestie nibh, in auctor tortor dignissim a. Vivamus elementum volutpat massa, eget pretium nunc mattis ac. "/>
+                			<LineBreak/>
+                			<Run/>
+                			<LineBreak/>
+                			<Run Text="Integer egestas lectus vel tellus ornare ac dictum arcu porttitor.  Sed ut ullamcorper enim. Suspendisse malesuada fringilla risus dapibus rutrum. Pellentesque lorem mauris, fermentum eget bibendum eu, tincidunt ac lorem. Maecenas vel feugiat lacus. Morbi rhoncus tincidunt lorem, sed mattis lorem dictum non. Vivamus euismod odio pellentesque sapien ultrices dictum."/>
+                			<LineBreak/>
+                			<Run/>
+                			<LineBreak/>
+                			<Run Text="Vestibulum vel elit libero. In tincidunt lorem a est porta pellentesque. tortor dignissim a. Vivamus elementum volutpat massa, eget pretium nunc mattis ac. "/>
+                    </TextBlock>
+                </Grid>
+                <ListView
+            			AutomationProperties.AutomationId="ItemGridView"
+            			AutomationProperties.Name="Items In Group"
+                       
+            			ItemsSource="{Binding Source={StaticResource itemsViewSource}}"
+            			ItemTemplate="{StaticResource Standard500x130ItemTemplate}"
+            			SelectionMode="None"
+                        Margin="20,0,40,0"
+            			IsItemClickEnabled="True"
+                    ItemClick="ListView_ItemClick_1"
+            			 Width="370">
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="1,0,0,6">
+                                        <!--<Button
+                                    AutomationProperties.Name="Group Title"
+                                    Click="Header_Click"
+                                    Style="{StaticResource TextPrimaryButtonStyle}" >
+                                    <StackPanel Orientation="Horizontal">-->
+                                        <TextBlock Text="Related News" Foreground="Black" Margin="3,-7,10,10" Style="{StaticResource GroupHeaderTextStyle}" />
+
+                                        <!--</StackPanel>-->
+                                        <!--</Button>-->
+                                    </Grid>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                            <GroupStyle.Panel>
+                                <ItemsPanelTemplate>
+                                    <VariableSizedWrapGrid Orientation="Vertical" Margin="0,0,0,0"/>
+                                </ItemsPanelTemplate>
+                            </GroupStyle.Panel>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+
+                </ListView>
+            </StackPanel>
+        </ScrollViewer>
+        <!-- Back button and page title -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="backButton" Click="GoBack" BorderBrush="Black" Foreground="Black" IsEnabled="{Binding Frame.CanGoBack, ElementName=pageRoot}" Style="{StaticResource BackButtonStyle}"/>
+            <TextBlock x:Name="pageTitle" Foreground="Black" Text="News Headlines" Style="{StaticResource PageHeaderTextStyle}" Grid.Column="1" IsHitTestVisible="false"/>
+            <Image x:Name="imgLogo" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Source="Assets/AppLogo.png" Width="190"/>
+        </Grid>
+        <Grid x:Name="SnapGrid" Visibility="Collapsed" Background="White" Width="300" Grid.Row="1">
+            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible">
+            <StackPanel Orientation="Vertical">
+                <StackPanel VerticalAlignment="Top" Background="White" Width="300">
+                    <Image Height="300" Margin="10" Stretch="UniformToFill" Width="280" Source="Assets/Images/SubPageBigImage.jpg"/>
+                    <TextBlock Margin="10,0,10,10" Style="{StaticResource SubheaderTextStyle}" MaxHeight="60" Foreground="#FF357999" HorizontalAlignment="Left" Width="300" Text="Lorem Ipsum" FontWeight="SemiBold" FontSize="26.667"/>
+                </StackPanel>
+                <Grid Width="280" Height="500" VerticalAlignment="Top" Margin="10" Background="#FF161616">
+                    <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="13.333" Margin="10,20,0,0" FontFamily="Segoe UI" LineHeight="24">
+                			<Run Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent est ipsum, luctus in porta non, porttitor vitae dolor. Donec imperdiet neque faucibus ante gravida in commodo dolor tristique. Suspendisse potenti. Maecenas at sapien nunc, ullamcorper sollicitudin neque. Pellentesque mattis molestie nibh, in auctor tortor dignissim a. Vivamus elementum volutpat massa, eget pretium nunc mattis ac. "/>
+                			<LineBreak/>
+                			<Run/>
+                			<LineBreak/>
+                			<Run Text="Integer egestas lectus vel tellus ornare ac dictum arcu porttitor.  Sed ut ullamcorper enim. Suspendisse malesuada fringilla risus dapibus rutrum. Pellentesque lorem mauris, fermentum eget bibendum eu, tincidunt ac lorem. Maecenas vel feugiat lacus. Morbi rhoncus tincidunt lorem, sed mattis lorem dictum non. Vivamus euismod odio pellentesque sapien ultrices dictum."/>
+                			<LineBreak/>
+                			<Run/>
+                			<LineBreak/>
+                			<Run Text="Vestibulum vel elit libero. In tincidunt lorem a est porta pellentesque. tortor dignissim a. Vivamus elementum volutpat massa, eget pretium nunc mattis ac. "/>
+                    </TextBlock>
+                </Grid>
+            </StackPanel>
+            </ScrollViewer>
+
+
+        </Grid>
+            <VisualStateManager.VisualStateGroups>
+
+            <!-- Visual states reflect the application's view state -->
+            <VisualStateGroup x:Name="ApplicationViewStates">
+                <VisualState x:Name="FullScreenLandscape"/>
+                <VisualState x:Name="Filled"/>
+
+                <!-- The back button respects the narrower 100-pixel margin convention for portrait -->
+                <VisualState x:Name="FullScreenPortrait">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="backButton" Storyboard.TargetProperty="Style">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PortraitBackButtonStyle}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="container" Storyboard.TargetProperty="Margin">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="96,0,0,0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        
+                    </Storyboard>
+                </VisualState>
+
+                <!-- The back button and title have different styles when snapped -->
+                <VisualState x:Name="Snapped">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="backButton" Storyboard.TargetProperty="Style">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource SnappedBackButtonStyle}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="pageTitle" Storyboard.TargetProperty="Style">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource SnappedPageHeaderTextStyle}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="gridScrollViewer" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SnapGrid" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="imgLogo" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+
+
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</common:LayoutAwarePage>
